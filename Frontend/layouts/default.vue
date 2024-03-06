@@ -91,6 +91,7 @@
 <script>
 export default {
   name: 'DefaultLayout',
+  middleware: ["session-control", "auth"],
   data () {
     return {
       clipped: false,
