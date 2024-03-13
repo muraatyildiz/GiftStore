@@ -1,13 +1,12 @@
 from flask import Flask, request, jsonify
 import hashlib
 import datetime
-from pymongo import MongoClient
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask import Blueprint
 from logging.config import dictConfig
 from flask_cors import CORS
-import pymongo
-import certifi
+from bson import ObjectId
+from dbconn import db
 auth_api = Blueprint('auth_api', __name__)
 
 dictConfig({
@@ -29,9 +28,6 @@ dictConfig({
 auth = Flask(__name__)
 CORS(auth)
 
-
-client = MongoClient("mongodb+srv://mrtyldz2350:XZbPxZdz4B9FqMj4@cluster2.tczpjji.mongodb.net/?retryWrites=true&w=majority&appName=Cluster2",tlsCAFile=certifi.where())
-db = client["web"]
 users_collection = db["users"]
 
 @auth_api.route("/add", methods=["POST"])
@@ -66,6 +62,43 @@ def profile():
 	user_from_db = users_collection.find_one({'username' : current_user})
 	if user_from_db:
 		del user_from_db['_id'], user_from_db['password'] 
-		return jsonify({'profile' : user_from_db }), 200
+		return jsonify({'user' : user_from_db }), 200
 	else:
 		return jsonify({'msg': 'Profile not found'}), 404
+	
+@auth_api.route("/userList", methods=["GET"])
+@jwt_required()
+def getList():
+    data = list(users_collection.find({},{"password": 0}))  # Retrieve all documents from the collection
+    
+    # Convert ObjectId to string representation
+    for item in data:
+        item['_id'] = str(item['_id'])
+
+    return jsonify(data),200
+
+@auth_api.route('/update/<string:item_id>', methods=['PUT'])
+@jwt_required()
+def edit_item(item_id):
+    try:
+        updated_data = request.json
+        updated_data.pop('_id', None)
+        updated_data.pop('password', None)
+        result = users_collection.update_one({'_id': ObjectId(item_id)}, {'$set': updated_data})
+        if result.modified_count == 1:
+            return jsonify({'message': 'Item updated successfully'}),200
+        else:
+            return jsonify({'message': 'Item not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@auth_api.route("/delete/<string:item_id>", methods=["DELETE"])
+@jwt_required()
+def delete(item_id):
+    try:
+        result = users_collection.delete_one({'_id': ObjectId(item_id)})
+        if result.deleted_count == 1:
+            return jsonify({'message': 'Item deleted successfully'}),200
+        else:
+            return jsonify({'message': 'Item not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

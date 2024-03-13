@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from openai import OpenAI
 from dotenv import load_dotenv
 from flask import Blueprint
@@ -29,6 +30,7 @@ load_dotenv()
 client = OpenAI()
 
 @openai_api.route("/description", methods=['GET','POST'])
+@jwt_required()
 def createDescription():
     user_request = request.get_json()
     completion = client.chat.completions.create(
