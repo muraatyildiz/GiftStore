@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from openAi import openai_api
 from auth import auth_api
 from product import product_api
+from fileUpload import fileUpload_api
 from flask_cors import CORS
 import certifi
 import os
@@ -16,6 +17,7 @@ app = Flask(__name__)
 app.register_blueprint(openai_api, url_prefix='/openai/')
 app.register_blueprint(auth_api, url_prefix='/auth/')
 app.register_blueprint(product_api, url_prefix='/product/')
+app.register_blueprint(fileUpload_api, url_prefix='/file/')
 CORS(app)
 
 jwt = JWTManager(app)
