@@ -33,27 +33,34 @@ client = OpenAI()
 @jwt_required()
 def createDescription():
     user_request = request.get_json()
+    userContent = user_request['key_words'] + "is my product to sell on my gift website application."\
+    "I want to write a product description for that.Can you write a descrition whick 50 words and help seo."\
+    +"And send just the description as a answer because i am passting your answer directly to website"
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
     {"role": "system", "content": "You are a helpful assistant"},
-    {"role": "user", "content": user_request['key_words']}
+    {"role": "user", "content": userContent}
       ]
     )
 
-    # print(completion)
-    # mesajdaki semboller silenecek 
-    # aciklama icin en iyi mesajlar buluanacak
-    # diger metodlar yapialcak
     return jsonify({'msg': completion.choices[0].message.content.strip()}), 201
 
-@openai_api.route("/filename", methods=['GET','POST'])
-def createFilename():
-    print('test')
-    return jsonify({'msg': 'filename created successfully'}), 201
+
 
 @openai_api.route("/alttext", methods=['GET','POST'])
 def createAltText():
-    print('test')
-    return jsonify({'msg': 'alttext created successfully'}), 201
+    user_request = request.get_json()
+    userContent = user_request['key_words'] + "is my product to sell on my gift website application."\
+    "I need a alt text for my product image. Can you give a meaningfull 15 words alt text which helps seo ?"\
+    +"And send just the description as a answer because i am passting your answer directly to website"
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+    {"role": "system", "content": "You are a helpful assistant"},
+    {"role": "user", "content": userContent}
+      ]
+    )
+    
+    return jsonify({'msg': completion.choices[0].message.content.strip()}), 201
 
