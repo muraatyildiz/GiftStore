@@ -9,6 +9,7 @@
             <template>
               <v-treeview
                 :items="items"
+                :open="[1, 2]"
                 :selected-color="'#fff'"
                 activatable
                 @update:active="selectCategory"
@@ -25,6 +26,7 @@
               :height="10"
               class="align-center"
               dense
+              @change="handleRangeChange"
             ></v-range-slider>
             <v-row class="pa-2" dense>
               <v-col cols="12" sm="5">
@@ -49,7 +51,7 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <v-divider></v-divider>
+            <!-- <v-divider></v-divider>
             <v-card-title class="pb-0">Customer Rating</v-card-title>
             <v-container class="pt-0" fluid>
               <v-checkbox
@@ -77,8 +79,8 @@
                 dense
               ></v-checkbox>
             </v-container>
-            <v-divider></v-divider>
-            <v-card-title class="pb-0">Brand</v-card-title>
+            <v-divider></v-divider> -->
+            <!-- <v-card-title class="pb-0">Brand</v-card-title>
             <v-container class="pt-0" fluid>
               <v-checkbox label="XS" hide-details dense></v-checkbox>
               <v-checkbox label="S" hide-details dense></v-checkbox>
@@ -87,7 +89,7 @@
               <v-checkbox label="XL" hide-details dense></v-checkbox>
               <v-checkbox label="XXL" hide-details dense></v-checkbox>
               <v-checkbox label="XXXL" hide-details dense></v-checkbox>
-            </v-container>
+            </v-container> -->
           </v-card>
         </div>
         <div class="col-md-9 col-sm-9 col-xs-12">
@@ -105,7 +107,7 @@
             <v-col cols="12" sm="4">
               <v-select
                 class="pa-0"
-                v-model="select"
+                v-model="selectedSort"
                 :items="options"
                 style="margin-bottom: -20px"
                 outlined
@@ -183,11 +185,10 @@
 export default {
   data: () => ({
     range: [0, 10000],
-    select: "Popularity",
+    selectedSort: "Relevance",
     options: [
-      "Default",
-      "Popularity",
       "Relevance",
+      "Popularity",
       "Price: Low to High",
       "Price: High to Low",
     ],
@@ -232,21 +233,47 @@ export default {
       },
     ],
     products: [],
-    filteredProducts:[],
+    filteredProducts: [],
     pages: null,
     totalPoruducts: null,
     search: "",
+    category: "",
   }),
   watch: {
     "$route.query"() {
       if (this.$route.query.search && this.$route.query.search.length > 2) {
-        this.getProductList(1, this.$route.query.search);
+        this.getProductList(1, this.$route.query.search, this.category);
       } else {
-        this.getProductList(1, this.search);
+        this.getProductList(1, this.search, this.category);
+      }
+    },
+    selectedSort(newValue, oldValue) {
+      switch (newValue) {
+        case "Relevance":
+          this.products.sort((a, b) =>a._id.localeCompare(b._id));
+          break;
+        case "Popularity":
+          this.products.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case  "Price: Low to High":
+          this.products.sort((a, b) => a.price - b.price);
+          break;
+        case  "Price: High to Low":
+          this.products.sort((a, b) => b.price - a.price);
+          break;
       }
     },
   },
   methods: {
+    handleRangeChange(newRange) {
+      this.getProductList(
+        1,
+        this.search,
+        this.category,
+        newRange[0],
+        newRange[1]
+      );
+    },
     selectCategory(selectedItems) {
       let selectCategory;
       const selectedItem = selectedItems[selectedItems.length - 1];
@@ -259,22 +286,29 @@ export default {
           break;
         }
       }
-      console.log(selectCategory.name);
-      if (selectCategory) {
 
-          const filteredProducts = this.products.filter(product => product.category === selectCategory.name);
-          this.products = filteredProducts;
+      if (selectCategory) {
+        this.getProductList(1, this.search, selectCategory.name);
       } else {
-          console.log("No category selected.");
-          // Handle the case where no category is selected
+        console.log("No category selected.");
+        // Handle the case where no category is selected
       }
     },
-    getProductList(pageNumber, search) {
-      if (search === undefined || pageNumber === undefined) {
+    getProductList(pageNumber, search, category, minPrice, maxPrice) {
+      if (search === undefined) {
         search = "";
       }
+      if (category === undefined) {
+        category = "";
+      }
+      if (minPrice === undefined) {
+        minPrice = 0;
+      }
+      if (maxPrice === undefined) {
+        maxPrice = 100000;
+      }
 
-      let link = `product/list?page=${pageNumber}&search=${search}`;
+      let link = `product/list?page=${pageNumber}&search=${search}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
       this.$store
         .dispatch("requestGet", link)
         .then((response) => {
@@ -282,6 +316,11 @@ export default {
             this.products = response.data.products;
             this.pages = response.data.total_pages;
             this.totalPoruducts = response.data.total;
+            this.min = response.data.min_price;
+            this.max = response.data.max_price;
+            let { minPrice, maxPrice } = this.findMinMaxPrice(this.products);
+            this.range[0] = minPrice;
+            this.range[1] = maxPrice;
           }
         })
         .catch((error) => {
@@ -289,7 +328,23 @@ export default {
         });
     },
     next(page) {
-      this.getProductList(page);
+      this.getProductList(page, this.search, this.category);
+    },
+    findMinMaxPrice(products) {
+      let minPrice = Number.POSITIVE_INFINITY;
+      let maxPrice = Number.NEGATIVE_INFINITY;
+
+      for (let i = 0; i < products.length; i++) {
+        let price = products[i].price;
+        if (price < minPrice) {
+          minPrice = price;
+        }
+        if (price > maxPrice) {
+          maxPrice = price;
+        }
+      }
+
+      return { minPrice, maxPrice };
     },
   },
   created() {
