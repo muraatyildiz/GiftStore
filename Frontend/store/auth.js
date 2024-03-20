@@ -69,19 +69,18 @@ export const actions = {
 		commit("setAuthKey", { authKey: token, expiresIn });
 	},
 	authUser({ state, commit, rootState, dispatch }, authData) {
-		let authLink = rootState.ApiLink + "api/getToken/auth/login";
+		let authLink = rootState.ApiLink + "auth/login";
 		Vue.http.options.xhr = { withCredentials: true };
 		Vue.http.options.emulateJSON = true;
-
-		return Vue.http.post(authLink, authData, { headers: { "Accept": "application/json, text/plain, */*" } })
+		let data = JSON.stringify(authData);
+		return Vue.http.post(authLink, data, { headers: {"Content-Type": "application/json"  } })
 			.then((response) => {
 				let data = response.data;
 				let expiresIn = new Date().getTime() + +data.expires_in * 1000;
 				Cookie.set("authKey", data.access_token);
 				Cookie.set("expiresIn", expiresIn);
-				//localStorage.setItem("authKey", data.access_token)
 				commit("setAuthKey", { authKey: data.access_token, expiresIn });				
-				var UserData = { token: data.access_token, mbl: authData.mobil }
+				var UserData = { token: data.access_token }
 				dispatch("requestUserInfo", UserData, { root: true });
 			});
 	},

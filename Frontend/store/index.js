@@ -1,8 +1,8 @@
 import Vue from "vue";
 
 export const state = () => ({
-	ApiLink: process.env.NODE_ENV === "development" ? "http://172.20.10.8:8080/" : "/",
-	ApiLink2: process.env.NODE_ENV === "development" ? "http://172.20.10.8:8080/" : "/",
+	ApiLink: process.env.NODE_ENV === "development" ? "http://127.0.0.1:8080/" : "/",
+	ApiLink2: process.env.NODE_ENV === "development" ? "http://20.218.157.149:8080/" : "/",
 	userInfo :null,
 });
 
@@ -22,7 +22,7 @@ export const actions = {
 		let token = vuexContext.getters["auth/getToken"];
 		token = "Bearer " + token;
 		send.link = vuexContext.state.ApiLink + send.link;
-		return Vue.http.post(send.link, send.data, { headers: { "Authorization": token } }).catch((r) => {
+		return Vue.http.post(send.link, send.data, { headers: { "Authorization": token ,"Content-Type": "application/json"} }).catch((r) => {
 			if (r && r.status && r.status === 401) {
 				vuexContext.dispatch("auth/logout");
 				if (process.client) {
@@ -35,7 +35,7 @@ export const actions = {
 		let token = vuexContext.getters["auth/getToken"];
 		token = "Bearer " + token;
 		link = vuexContext.state.ApiLink + link;
-		return Vue.http.get(link, { headers: { "Authorization": token } }).catch((r) => {
+		return Vue.http.get(link, { headers: { "Authorization": token ,"Content-Type": "application/json" } }).catch((r) => {
 			if (r && r.status && r.status === 401) {
 				vuexContext.dispatch("auth/logout");
 				if (process.client) {
@@ -48,26 +48,47 @@ export const actions = {
 		let ths = this;
 		let token = commingToken.token;
 		token = "Bearer " + token;
-		var link = rootState.ApiLink + "userInfo";
-			Vue.http.get(link, { headers: { "Authorization": token } }).then((response) => {
+		var link = rootState.ApiLink + "auth/userInfo";
+			Vue.http.get(link, { headers: { "Authorization": token,"Content-Type": "application/json"  } }).then((response) => {
 			var answer = response.body;
-			if (answer.Durum) {
-				commit("setUserInfo", answer.Veri);			
+			console.log('answer',response)
+			if (response.status == 200) {
+				commit("setUserInfo", answer.user);			
 				ths.app.router.push("/");
 			}
 		}).catch((r) => {			
 			console.log("User info", r);
 		});
+	},
+	requestPut(vuexContext, send) {
+		let token = vuexContext.getters["auth/getToken"];
+		token = "Bearer " + token;
+		send.link = vuexContext.state.ApiLink + send.link;
+		return Vue.http.put(send.link, send.data, { headers: { "Authorization": token,"Content-Type": "application/json"  } }).catch((r) => {
+			if (r && r.status && r.status === 401) {
+				vuexContext.dispatch("auth/logout");
+				
+			} else { console.log("Error", r); }
+			});
+	},
+	requestDelete(vuexContext, link) {
+		let token = vuexContext.getters["auth/getToken"];
+		token = "Bearer " + token;
+		link = vuexContext.state.ApiLink + link;
+		return Vue.http.delete(link, { headers: { "Authorization": token ,"Content-Type": "application/json" }, }).catch((r) => {
+			if (r && r.status && r.status === 401) {
+				vuexContext.dispatch("auth/logout");
+				
+			} else { console.log("Error", r); }
+			});
+	},
 
-
-	}
 };
 
 export const getters = {
 	getUserInfo(state) {
-		if (state.userInfo) {
+		console.log(state)
 			return state.userInfo;
-		}
-		return null;
+		
 	}
 };
