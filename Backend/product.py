@@ -65,7 +65,9 @@ def sendList():
     page = int(request.args.get('page', 1))  
     page_size = int(request.args.get('page_size', 12))  
     search_term = request.args.get('search', '')  
-    
+    category = request.args.get('category', '') 
+    min_price = float(request.args.get('minPrice', 0))  
+    max_price = float(request.args.get('maxPrice', float('inf')))
     query = {}  
 
     if search_term:
@@ -77,17 +79,24 @@ def sendList():
                 {"category": {"$regex": regex_pattern}}
             ]
         }
-  
-    total_documents = products_collection.count_documents(query)  # Count documents matching the query
+    if category: 
+        query["category"] = category
+    query["price"] = {"$gte": min_price, "$lte": max_price}
+    print('sddsdsdsdsd',query)
+    total_documents = products_collection.count_documents(query) 
     total_pages = ceil(total_documents / page_size)
     skip = (page - 1) * page_size
-    data = list(products_collection.find(query).skip(skip).limit(page_size))  # Retrieve documents for the specified page
-    
-    
+    data = list(products_collection.find(query).skip(skip).limit(page_size))
+
+    min_price_doc = products_collection.find_one({}, sort=[("price", 1)])
+    min_price = float(min_price_doc["price"]) if min_price_doc else 0
+
+    max_price_doc = products_collection.find_one({}, sort=[("price", -1)])
+    max_price = float(max_price_doc["price"]) if max_price_doc else float('inf')
     for item in data:
         item['_id'] = str(item['_id'])
 
-    return jsonify({'products': data, 'total':total_documents, 'total_pages': total_pages}), 200
+    return jsonify({'products': data, 'total':total_documents, 'total_pages': total_pages, 'min_price':min_price,'max_price':max_price}), 200
 
 @product_api.route("/admin/list", methods=['GET'])
 @jwt_required()

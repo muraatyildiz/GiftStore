@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
 app.config['JWT_SECRET_KEY'] = SECRET_KEY
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
 
-
+ 
 if __name__ == '__main__':
 	# app.run(debug=True)
 	app.run(host='0.0.0.0',port='8080')
