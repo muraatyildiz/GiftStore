@@ -47,6 +47,18 @@ def add():
    else:
       return jsonify({'msg': 'Product already exists'}), 409
 
+
+@product_api.route('/<string:item_id>', methods=['GET']) 
+def getProduct(item_id):
+    try:
+        result = products_collection.find_one({'_id': ObjectId(item_id)})
+        if result:
+            result['_id'] = str(result['_id'])
+            return jsonify({'product': result}),200
+        else:
+            return jsonify({'message': 'Item not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 @product_api.route('/update/<string:item_id>', methods=['PUT']) 
 def update(item_id):
     try:
@@ -59,7 +71,6 @@ def update(item_id):
             return jsonify({'message': 'Item not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 @product_api.route("/list", methods=['GET'])
 def sendList(): 
     page = int(request.args.get('page', 1))  
