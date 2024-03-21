@@ -73,6 +73,16 @@
             title: 'Products',
             to: '/admin/productList'
           },
+          {
+            icon: 'mdi-pencil',
+            title: 'Home Page Sliders',
+            to: '/admin/homeSliders'
+          },
+          {
+            icon: 'mdi-pencil',
+            title: 'Home Page Cards',
+            to: '/admin/homeCards'
+          },
         ],
         miniVariant: false,
         right: true,

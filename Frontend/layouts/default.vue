@@ -9,8 +9,8 @@
       <!--      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />-->
 
       <v-toolbar-title style="width: 350px">
-        <a href="/" class="white--text" style="text-decoration: none"
-          ><v-icon>mdi-truck</v-icon>&nbsp;ShipIT</a
+        <nuxt-link to="/" class="white--text" style="text-decoration: none"
+          ><v-icon>mdi-truck</v-icon>&nbsp;ShipIT</nuxt-link
         >
       </v-toolbar-title>
       <v-text-field
@@ -28,44 +28,53 @@
           <v-icon>mdi-account-circle</v-icon>
         </v-btn>
       </nuxt-link>
-      <nuxt-link to="/wishlist">
-      <v-btn icon>
-        <v-badge content="2" value="2" color="green" overlap>
-          <v-icon>mdi-bell</v-icon>
-        </v-badge>
-      </v-btn>
-    </nuxt-link>
-    <nuxt-link to="/cart">
-      <v-btn icon>
-        <v-badge content="2" value="2" color="green" overlap>
-          <v-icon>mdi-cart</v-icon>
-        </v-badge>
-      </v-btn>
-    </nuxt-link>
+      <nuxt-link to="/wishlist"
+        >
+        <v-btn icon>
+          <v-badge
+            v-if="getProductsInWishlist.length > 0"
+            :content="getProductsInWishlist.length"
+            value="2"
+            color="green"
+            overlap
+          >
+            <v-icon>mdi-bell</v-icon>
+          </v-badge>
+          <v-icon v-else>mdi-bell</v-icon>
+        </v-btn>
+      </nuxt-link>
+      <nuxt-link to="/cart">
+        <v-btn icon>
+          <v-badge
+            v-if="getProductsInCart.length > 0"
+            :content="getProductsInCart.length"
+            value="2"
+            color="green"
+            overlap
+          >
+            <v-icon>mdi-cart</v-icon>
+          </v-badge>
+
+          <v-icon v-else>mdi-cart</v-icon>
+        </v-btn>
+      </nuxt-link>
     </v-app-bar>
     <v-content>
       <v-bottom-navigation :value="activeBtn" color="primary" horizontal>
-        <a href="/" class="v-btn">
+        <nuxt-link to="/" class="v-btn">
           <span>Home</span>
-        </a>
-        <v-menu open-on-hover offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on">
-              <span>Shop</span>
-            </v-btn>
-          </template>
-          <v-card class="mx-auto" max-width="344" outlined>
-            <v-list-item v-for="(item, index) in items" :key="index" href="/">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-card>
-        </v-menu>
-        <a href="/" class="v-btn">
+        </nuxt-link>
+        <nuxt-link to="/" class="v-btn">
+          <span>Shop</span>
+        </nuxt-link>
+
+        <nuxt-link to="/" class="v-btn">
           <span>Products</span>
-        </a>
-        <v-btn href="/">
+        </nuxt-link>
+
+        <nuxt-link to="/" class="v-btn">
           <span>Collections</span>
-        </v-btn>
+        </nuxt-link>
       </v-bottom-navigation>
     </v-content>
 
@@ -74,16 +83,16 @@
     <v-footer :padless="true">
       <v-card flat tile width="100%" class="secondary white--text text-center">
         <v-card-text>
-          <v-btn class="mx-4 white--text" icon>
+          <v-btn to="/" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-home</v-icon>
           </v-btn>
-          <v-btn class="mx-4 white--text" icon>
+          <v-btn to="/" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-email</v-icon>
           </v-btn>
-          <v-btn class="mx-4 white--text" icon>
+          <v-btn to="/" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-calendar</v-icon>
           </v-btn>
-          <v-btn class="mx-4 white--text" icon>
+          <v-btn to="/" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-delete</v-icon>
           </v-btn>
         </v-card-text>
@@ -109,6 +118,7 @@
   </v-app>
 </template>
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -120,13 +130,16 @@ export default {
         { title: "Shoes" },
       ],
       activeBtn: 1,
-      search:''
+      search: "",
     };
   },
   watch: {
-    'search'() {
-          this.$router.push({path: './', query: { search: this.search }})
-    }
+    search() {
+      this.$router.push({ path: "./", query: { search: this.search } });
+    },
+  },
+  computed: {
+    ...mapGetters(["getProductsInCart", "getProductsInWishlist"]),
   },
 };
 </script>

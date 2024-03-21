@@ -47,8 +47,8 @@
                   :value="1"
                   dense
               ></v-text-field>
-              <v-btn class="primary white--text" outlined tile dense><v-icon>mdi-cart</v-icon> ADD TO CART</v-btn>
-              <v-btn class="ml-4" outlined tile>ADD TO WISHLIST</v-btn>
+              <v-btn class="primary white--text" @click="addToCart(product)" outlined tile dense><v-icon>mdi-cart</v-icon> ADD TO CART</v-btn>
+              <v-btn class="ml-4" @click="addToWishlist(product)" outlined tile>ADD TO WISHLIST</v-btn>
   
             </div>
   
@@ -106,7 +106,7 @@
   
                       <div class="text-center">
                         <v-btn
-                         :href="`/${product._id}`"
+                         :to="`/${product._id}`"
                           class="ma-2"
                           outlined
                           color="info"
@@ -164,6 +164,7 @@
     </div>
   </template>
   <script>
+   import { mapMutations } from "vuex";
 export default {
   data: () => ({
     rating: 3,
@@ -189,6 +190,7 @@ export default {
     item: 5,
   }),
   methods: {
+    ...mapMutations(["addProductToCart","addProductToWishlist"]),
     getProduct() {
       let id = this.$route.params.id;
       let link = "product/"+ id;
@@ -221,6 +223,12 @@ export default {
         .catch((error) => {
           console.error("Error:", error);
         });
+    },
+    addToCart(product) {
+       this.addProductToCart(product);
+    },
+    addToWishlist(product){
+       this.addProductToWishlist(product)
     }
   },
   created() {

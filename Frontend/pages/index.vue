@@ -1,352 +1,229 @@
 <template>
   <div>
+    <v-carousel hide-delimiters>
+      <v-carousel-item v-for="(slider, index) in sliders" :key="index"  :src="$store.state.ApiLink + 'file/serve-image/' + slider.imgUrl">
+        <nuxt-link  style="text-decoration: none; color: inherit;" :to="`${slider.route}`">
+        <v-row class="fill-height" align="center" justify="center">
+          <div class="display-2 white--text pl-5 pr-5 hidden-sm-only">
+            <strong>{{slider.header}}</strong>
+          </div>
+          <br />
+        </v-row>
+      </nuxt-link>
+      </v-carousel-item>
+    </v-carousel>
+    <div class="pl-4 pr-4 row mt-2">
+      <div v-for="(card,index) in cards.slice(0, 2)" :key="index" class="col-md-6 col-sm-6 col-xs-12">
+        <v-card>
+          <v-img
+          :src="$store.state.ApiLink + 'file/serve-image/' + card.imgUrl"
+            class="white--text align-center"
+            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+            height="400px"
+            :alt="card.altText"
+          >
+            <h1 class="text-center font-size">{{ card.header }}</h1>
+            <div class="text-center">
+              <v-btn to="/shop" class="white--text" outlined>SHOP NOW</v-btn>
+            </div>
+
+          </v-img>
+        </v-card>
+     
+      </div>
+     
+    </div>
+    <div class="pl-4 pr-4 row">
+      <div v-for="(card,index) in cards.slice(-3)" :key="index" class="col-md-4 col-sm-4 col-xs-12">
+        <v-card outlined>
+          <v-img
+           :src="$store.state.ApiLink + 'file/serve-image/' + card.imgUrl"
+            class="white--text align-center"
+            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+            height="300px"
+            :alt="card.altText"
+          >
+            <h1 class="text-center font-size">{{card.header}}</h1>
+            <div class="text-center mt-2">
+              <v-btn class="white--text caption" to="/shop" text
+                >SHOP NOW
+                <v-icon class="white--text caption"
+                  >mdi-arrow-right</v-icon
+                ></v-btn
+              >
+            </div>
+          </v-img>
+        </v-card>
+      </div>
+    
+    </div>
     <v-container>
-      <div class="row">
-        <div class="col-md-3 col-sm-3 col-xs-12">
-          <v-card outlined>
-            <v-card-title>Filters</v-card-title>
+      <v-row no-gutters>
+        <v-col :cols="12">
+          <v-card-text class="" tile outlined>
+            <v-card-title class="subheading">Deals of the Day</v-card-title>
             <v-divider></v-divider>
-            <template>
-              <v-treeview
-                :items="items"
-                :open="[1, 2]"
-                :selected-color="'#fff'"
-                activatable
-                @update:active="selectCategory"
-                open-on-click
-                dense
-              ></v-treeview>
-            </template>
-            <v-divider></v-divider>
-            <v-card-title>Price</v-card-title>
-            <v-range-slider
-              v-model="range"
-              :max="max"
-              :min="min"
-              :height="10"
-              class="align-center"
-              dense
-              @change="handleRangeChange"
-            ></v-range-slider>
-            <v-row class="pa-2" dense>
-              <v-col cols="12" sm="5">
-                <v-text-field
-                  :value="range[0]"
-                  label="Min"
-                  outlined
-                  dense
-                  @change="$set(range, 0, $event)"
-                ></v-text-field>
+            <div class="row">
+              <div v-for="(product, index) in products" :key="index" class="col-12 col-md-3 col-sm-6 col-xs-6 text-center">
+                <v-hover v-slot:default="{ hover }" open-delay="200">
+                  <v-card :elevation="hover ? 16 : 2">
+                    <v-img
+                      class="white--text align-end"
+                      height="200px"
+                      :src="
+                      $store.state.ApiLink + 'file/serve-image/' + product.imgUrl
+                    "
+                    >
+                      <v-card-title>{{product.name}}</v-card-title>
+                    </v-img>
+
+                    <v-card-text class="text--primary text-center">
+                      <div>Upto 60% + Extra 10%</div>
+                    </v-card-text>
+
+                    <div class="text-center">
+                      <v-btn  :to="`/${product._id}`" class="ma-2" outlined color="info">
+                        Explore
+                      </v-btn>
+                    </div>
+                  </v-card>
+                </v-hover>
+              </div>
+          
+            </div>
+          </v-card-text>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-card class="accent">
+      <v-container>
+        <v-row no-gutters>
+          <v-col class="col-12 col-md-4 col-sm-12">
+            <v-row>
+              <v-col class="col-12 col-sm-3 pr-4" align="right">
+                <v-icon class="display-2">mdi-truck</v-icon>
               </v-col>
-              <v-col cols="12" sm="2">
-                <p class="pt-2 text-center">TO</p>
-              </v-col>
-              <v-col cols="12" sm="5">
-                <v-text-field
-                  :value="range[1]"
-                  label="Max"
-                  outlined
-                  dense
-                  @change="$set(range, 1, $event)"
-                ></v-text-field>
+              <v-col class="col-12 col-sm-9 pr-4">
+                <h3 class="font-weight-light">FREE SHIPPING & RETURN</h3>
+                <p class="font-weight-thin">Free Shipping over €300</p>
               </v-col>
             </v-row>
-            <!-- <v-divider></v-divider>
-            <v-card-title class="pb-0">Customer Rating</v-card-title>
-            <v-container class="pt-0" fluid>
-              <v-checkbox
-                append-icon="mdi-star"
-                label="4 & above"
-                hide-details
-                dense
-              ></v-checkbox>
-              <v-checkbox
-                append-icon="mdi-star"
-                label="3 & above"
-                hide-details
-                dense
-              ></v-checkbox>
-              <v-checkbox
-                append-icon="mdi-star"
-                label="2 & above"
-                hide-details
-                dense
-              ></v-checkbox>
-              <v-checkbox
-                append-icon="mdi-star"
-                label="1 & above"
-                hide-details
-                dense
-              ></v-checkbox>
-            </v-container>
-            <v-divider></v-divider> -->
-            <!-- <v-card-title class="pb-0">Brand</v-card-title>
-            <v-container class="pt-0" fluid>
-              <v-checkbox label="XS" hide-details dense></v-checkbox>
-              <v-checkbox label="S" hide-details dense></v-checkbox>
-              <v-checkbox label="M" hide-details dense></v-checkbox>
-              <v-checkbox label="L" hide-details dense></v-checkbox>
-              <v-checkbox label="XL" hide-details dense></v-checkbox>
-              <v-checkbox label="XXL" hide-details dense></v-checkbox>
-              <v-checkbox label="XXXL" hide-details dense></v-checkbox>
-            </v-container> -->
-          </v-card>
-        </div>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-          <v-breadcrumbs class="pb-0" :items="breadcrums"></v-breadcrumbs>
-
-          <v-row dense>
-            <v-col cols="12" sm="8" class="pl-6 pt-6">
-              <small
-                >Showing {{ (page - 1) * 12 + 1 }}-{{
-                  page == pages ? totalPoruducts : page * 12
-                }}
-                of {{ totalPoruducts }} products</small
-              >
-            </v-col>
-            <v-col cols="12" sm="4">
-              <v-select
-                class="pa-0"
-                v-model="selectedSort"
-                :items="options"
-                style="margin-bottom: -20px"
-                outlined
-                dense
-              ></v-select>
-            </v-col>
-          </v-row>
-
-          <v-divider></v-divider>
-
-          <div class="row text-center">
-            <div
-              class="col-md-3 col-sm-6 col-xs-12"
-              :key="pro.id"
-              v-for="pro in products"
-            >
-              <v-hover v-slot:default="{ hover }">
-                <v-card class="mx-auto" color="grey lighten-4" max-width="600">
-                  <v-img
-                    class="white--text align-end"
-                    :aspect-ratio="16 / 9"
-                    height="200px"
-                    :src="
-                      $store.state.ApiLink + 'file/serve-image/' + pro.imgUrl
-                    "
-                  >
-                    <v-card-title>{{ pro.category }} </v-card-title>
-                    <v-expand-transition>
-                      <div
-                        v-if="hover"
-                        class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
-                        style="height: 100%"
-                      >
-                      <v-btn v-if="hover" :href="`/${pro._id}`" class="" outlined>VIEW</v-btn>
-                      </div>
-                    </v-expand-transition>
-                  </v-img>
-                  <v-card-text class="text--primary">
-                    <div>
-                      <a href="/product" style="text-decoration: none">{{
-                        pro.name
-                      }}</a>
-                    </div>
-                    <div>${{ pro.price }}</div>
-                  </v-card-text>
-                </v-card>
-              </v-hover>
-            </div>
-          </div>
-          <div class="text-center mt-12">
-            <v-pagination
-              v-model="page"
-              @input="next"
-              :length="pages"
-            ></v-pagination>
-          </div>
-        </div>
-      </div>
-    </v-container>
+          </v-col>
+          <v-col class="col-12 col-md-4 col-sm-12">
+            <v-row>
+              <v-col class="col-12 col-sm-3 pr-4" align="right">
+                <v-icon class="display-2">mdi-cash-usd</v-icon>
+              </v-col>
+              <v-col class="col-12 col-sm-9 pr-4">
+                <h3 class="font-weight-light">MONEY BACK GUARANTEE</h3>
+                <p class="font-weight-thin">30 Days Money Back Guarantee</p>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col class="col-12 col-md-4 col-sm-12">
+            <v-row>
+              <v-col class="col-12 col-sm-3 pr-4" align="right">
+                <v-icon class="display-2">mdi-headset</v-icon>
+              </v-col>
+              <v-col class="col-12 col-sm-9 pr-4">
+                <h3 class="font-weight-light">020-800-456-747</h3>
+                <p class="font-weight-thin">24/7 Available Support</p>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card>
   </div>
 </template>
-<style>
-.v-card--reveal {
-  align-items: center;
-  bottom: 0;
-  justify-content: center;
-  opacity: 0.8;
-  position: absolute;
-  width: 100%;
-}
-</style>
+
 <script>
 export default {
-  data: () => ({
-    range: [0, 10000],
-    selectedSort: "Relevance",
-    options: [
-      "Relevance",
-      "Popularity",
-      "Price: Low to High",
-      "Price: High to Low",
-    ],
-    page: 1,
-    breadcrums: [
-      {
-        text: "Home",
-        disabled: false,
-        href: "/",
-      },
-      {
-        text: "Clothing",
-        disabled: false,
-        href: "/",
-      },
-      {
-        text: "T-Shirts",
-        disabled: true,
-        href: "/",
-      },
-    ],
-    min: 0,
-    max: 10000,
-    items: [
-      {
-        id: 2,
-        name: "Shoes",
-        children: [
-          { id: 2, name: "event" },
-          { id: 3, name: "flowers" },
-          { id: 4, name: "christmas" },
-        ],
-      },
-      {
-        id: 1,
-        name: "Clothing",
-        children: [
-          { id: 5, name: "event" },
-          { id: 6, name: "flowers" },
-          { id: 7, name: "christmas" },
-        ],
-      },
-    ],
-    products: [],
-    filteredProducts: [],
-    pages: null,
-    totalPoruducts: null,
-    search: "",
-    category: "",
-  }),
-  watch: {
-    "$route.query"() {
-      if (this.$route.query.search && this.$route.query.search.length > 2) {
-        this.getProductList(1, this.$route.query.search, this.category);
-      } else {
-        this.getProductList(1, this.search, this.category);
-      }
-    },
-    selectedSort(newValue, oldValue) {
-      switch (newValue) {
-        case "Relevance":
-          this.products.sort((a, b) =>a._id.localeCompare(b._id));
-          break;
-        case "Popularity":
-          this.products.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-        case  "Price: Low to High":
-          this.products.sort((a, b) => a.price - b.price);
-          break;
-        case  "Price: High to Low":
-          this.products.sort((a, b) => b.price - a.price);
-          break;
-      }
-    },
+  data() {
+    return {
+      items: [
+        { title: "Click Me" },
+        { title: "Click Me" },
+        { title: "Click Me" },
+        { title: "Click Me 2" },
+      ],
+      activeBtn: 1,
+      colors: [
+        "indigo",
+        "warning",
+        "pink darken-2",
+        "red lighten-1",
+        "deep-purple accent-4",
+      ],
+      slides: ["First", "Second", "Third", "Fourth", "Fifth"],
+      products:[],
+      sliders:[],
+      cards:[],
+    };
   },
-  methods: {
-    handleRangeChange(newRange) {
-      this.getProductList(
-        1,
-        this.search,
-        this.category,
-        newRange[0],
-        newRange[1]
-      );
-    },
-    selectCategory(selectedItems) {
-      let selectCategory;
-      const selectedItem = selectedItems[selectedItems.length - 1];
-      for (const item of this.items) {
-        const foundChild = item.children.find(
-          (child) => child.id === selectedItem
-        );
-        if (foundChild) {
-          selectCategory = foundChild;
-          break;
-        }
-      }
-
-      if (selectCategory) {
-        this.getProductList(1, this.search, selectCategory.name);
-      } else {
-        console.log("No category selected.");
-        // Handle the case where no category is selected
-      }
-    },
-    getProductList(pageNumber, search, category, minPrice, maxPrice) {
-      if (search === undefined) {
-        search = "";
-      }
-      if (category === undefined) {
-        category = "";
-      }
-      if (minPrice === undefined) {
-        minPrice = 0;
-      }
-      if (maxPrice === undefined) {
-        maxPrice = 100000;
-      }
-
-      let link = `product/list?page=${pageNumber}&search=${search}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+  methods:{
+    getProductlist(){
+        let productIdToRemove = this.$route.params.id;
+        let link = `product/list`;
       this.$store
         .dispatch("requestGet", link)
         .then((response) => {
           if (response.status == 200) {
             this.products = response.data.products;
-            this.pages = response.data.total_pages;
-            this.totalPoruducts = response.data.total;
-            this.min = response.data.min_price;
-            this.max = response.data.max_price;
-            let { minPrice, maxPrice } = this.findMinMaxPrice(this.products);
-            this.range[0] = minPrice;
-            this.range[1] = maxPrice;
+            this.products = this.products.slice(0, 4);
           }
         })
         .catch((error) => {
           console.error("Error:", error);
         });
     },
-    next(page) {
-      this.getProductList(page, this.search, this.category);
+    getCardList() {
+        let link = "homepage/cardList";
+        this.$store
+          .dispatch("requestGet", link)
+          .then((response) => {
+            var answer = response.body;
+            if (response.status == 200) {
+              this.cards = answer;
+            }
+          })
+          .catch((x) => {
+            console.log("Error");
+          });
+      },
+    getSliderList() {
+      let link = "homepage/sliderList";
+      this.$store
+        .dispatch("requestGet", link)
+        .then((response) => {
+          var answer = response.body;
+          if (response.status == 200) {
+            this.sliders = answer;
+          }
+        })
+        .catch((x) => {
+          console.log("Error");
+        });
     },
-    findMinMaxPrice(products) {
-      let minPrice = Number.POSITIVE_INFINITY;
-      let maxPrice = Number.NEGATIVE_INFINITY;
 
-      for (let i = 0; i < products.length; i++) {
-        let price = products[i].price;
-        if (price < minPrice) {
-          minPrice = price;
-        }
-        if (price > maxPrice) {
-          maxPrice = price;
-        }
-      }
-
-      return { minPrice, maxPrice };
-    },
   },
+
   created() {
-    this.getProductList(1);
+    if (process.client) {
+      this.getProductlist();
+      this.getSliderList();
+      this.getCardList();
+    }
   },
 };
 </script>
+<style>
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: 0.5;
+  position: absolute;
+  width: 100%;
+}
+</style>
