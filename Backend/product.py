@@ -93,7 +93,6 @@ def sendList():
     if category: 
         query["category"] = category
     query["price"] = {"$gte": min_price, "$lte": max_price}
-    print('sddsdsdsdsd',query)
     total_documents = products_collection.count_documents(query) 
     total_pages = ceil(total_documents / page_size)
     skip = (page - 1) * page_size

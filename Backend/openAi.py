@@ -64,3 +64,18 @@ def createAltText():
     
     return jsonify({'msg': completion.choices[0].message.content.strip()}), 201
 
+@openai_api.route("/alttextslider", methods=['GET','POST'])
+def createAltTextSlider():
+    userContent = "I have a website to sell gift products."\
+    "I need a alt text for my main slider images. Can you give a meaningfull 15 words alt text which helps seo ?"\
+    +"And send just the description as a answer because i am passting your answer directly to website"
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+    {"role": "system", "content": "You are a helpful assistant"},
+    {"role": "user", "content": userContent}
+      ]
+    )
+    
+    return jsonify({'msg': completion.choices[0].message.content.strip()}), 201
+
