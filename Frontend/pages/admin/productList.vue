@@ -159,6 +159,8 @@ export default {
       altText: "",
       description: "",
       userId: "",
+      rate: Math.floor(Math.random() * 5) + 1,
+      reviews:Math.floor(Math.random() * 250) + 1
     },
     dialog: false,
     dialogDelete: false,
