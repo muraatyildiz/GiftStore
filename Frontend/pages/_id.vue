@@ -96,11 +96,11 @@
                       $store.state.ApiLink + 'file/serve-image/' + product.imgUrl
                     "
                       >
-                        <v-card-title>{{product.name}} </v-card-title>
+                        <!-- <v-card-title>{{product.name}} </v-card-title> -->
                       </v-img>
   
                       <v-card-text class="text--primary text-center">
-                        <div>Upto 60% + Extra 10%</div>
+                        <div style="max-height: 20px; overflow: hidden;">{{product.name}}</div>
                         <!-- <div>{{product.name}}</div> -->
                       </v-card-text>
   
@@ -174,12 +174,12 @@ export default {
       {
         text: "Home",
         disabled: false,
-        href: "/",
+        to: "/",
       },
       {
-        text: "Clothing",
+        text: "Shop",
         disabled: false,
-        href: "/",
+        to: "/Shop",
       },
       {
         text:'',

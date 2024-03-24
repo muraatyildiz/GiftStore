@@ -10,11 +10,14 @@
 
       <v-toolbar-title style="width: 350px">
         <nuxt-link to="/" class="white--text" style="text-decoration: none"
-          ><v-icon>mdi-truck</v-icon>&nbsp;ShipIT</nuxt-link
-        >
+          ><img
+            src="logo.png"
+            alt="ShipIT Logo"
+            style="vertical-align: middle; height: 50px; margin-right: 8px"
+        /></nuxt-link>
       </v-toolbar-title>
       <v-text-field
-      v-model="search"
+        v-model="search"
         flat
         solo-inverted
         hide-details
@@ -98,20 +101,22 @@
         </v-card-text>
 
         <v-card-text class="white--text pt-0">
-          Phasellus feugiat arcu sapien, et iaculis ipsum elementum sit amet.
-          Mauris cursus commodo interdum. Praesent ut risus eget metus luctus
-          accumsan id ultrices nunc. Sed at orci sed massa consectetur dignissim
-          a sit amet dui. Duis commodo vitae velit et faucibus. Morbi vehicula
-          lacinia malesuada. Nulla placerat augue vel ipsum ultrices, cursus
-          iaculis dui sollicitudin. Vestibulum eu ipsum vel diam elementum
-          tempor vel ut orci. Orci varius natoque penatibus et magnis dis
-          parturient montes, nascetur ridiculus mus.
+          Our gift web shop offers a diverse array of thoughtful presents to
+          suit every occasion. With a curated selection ranging from elegant to
+          quirky, we aim to delight recipients and make gifting a joyous
+          experience. Browse through our collection of unique items, carefully
+          chosen to spark joy and create lasting memories. Whether you're
+          celebrating a special milestone or simply expressing appreciation, our
+          range of products ensures there's something for everyone. Experience
+          the convenience of shopping online with us, where quality meets
+          convenience. Discover the perfect gift today and let us help you make
+          every moment unforgettable.
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-text class="white--text">
-          {{ new Date().getFullYear() }} — <strong>ShipIT</strong>
+          {{ new Date().getFullYear() }} — <strong>Gift Shop</strong>
         </v-card-text>
       </v-card>
     </v-footer>
@@ -136,18 +141,18 @@ export default {
   },
   watch: {
     search() {
-      if (this.$route.name !== 'shop') {
-      if (this.search) {
-        this.$router.push({ name: 'shop', query: { search: this.search } });
-      } else {
-        // Handle the case where search is empty
-        this.$router.push({ name: 'shop' }); // Navigate to the "shop" page without query
+      if (this.$route.name !== "shop") {
+        if (this.search) {
+          this.$router.push({ name: "shop", query: { search: this.search } });
+        } else {
+          // Handle the case where search is empty
+          this.$router.push({ name: "shop" }); // Navigate to the "shop" page without query
+        }
+      } else if (this.search !== this.$route.query.search) {
+        // If already on the "shop" page but the search query has changed
+        this.$router.replace({ query: { search: this.search } });
       }
-    } else if (this.search !== this.$route.query.search) {
-      // If already on the "shop" page but the search query has changed
-      this.$router.replace({ query: { search: this.search } });
-    }
-  }
+    },
   },
   computed: {
     ...mapGetters(["getProductsInCart", "getProductsInWishlist"]),

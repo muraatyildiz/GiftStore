@@ -134,7 +134,7 @@
                         $store.state.ApiLink + 'file/serve-image/' + pro.imgUrl
                       "
                     >
-                      <v-card-title>{{ pro.category }} </v-card-title>
+                      <!-- <v-card-title>{{ pro.category }} </v-card-title> -->
                       <v-expand-transition>
                         <div
                           v-if="hover"
@@ -149,7 +149,7 @@
                       </v-expand-transition>
                     </v-img>
                     <v-card-text class="text--primary">
-                      <div>
+                      <div style="max-height: 20px; overflow: hidden;">
                         <nuxt-link
                           :to="`/${pro._id}`"
                           style="text-decoration: none"
@@ -200,38 +200,36 @@
         {
           text: "Home",
           disabled: false,
-          href: "/",
+          to: "/",
         },
         {
-          text: "Clothing",
-          disabled: false,
-          href: "/",
-        },
-        {
-          text: "T-Shirts",
+          text: "Shop",
           disabled: true,
-          href: "/",
+          to: "/",
         },
+        
       ],
       min: 0,
       max: 10000,
       items: [
         {
           id: 2,
-          name: "Shoes",
+          name: "Personel Gifts",
           children: [
-            { id: 2, name: "event" },
-            { id: 3, name: "flowers" },
-            { id: 4, name: "christmas" },
+            { id: 2, name: "jewellery" },
+            { id: 3, name: "personalised" },
+            { id: 4, name: "hat" },
+            { id: 5, name: "card" },
           ],
         },
         {
           id: 1,
-          name: "Clothing",
+          name: "Home Gifts",
           children: [
-            { id: 5, name: "event" },
-            { id: 6, name: "flowers" },
-            { id: 7, name: "christmas" },
+            { id: 6, name: "candle" },
+            { id: 7, name: "clock" },
+            { id: 8, name: "frame" },
+            { id: 9, name: "others" },
           ],
         },
       ],

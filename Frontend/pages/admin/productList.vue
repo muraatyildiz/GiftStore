@@ -44,7 +44,7 @@
                     <v-select
                       v-model="product.category"
                       label="Category"
-                      :items="['flowers', 'christmas', 'event']"
+                      :items="['jewellery','personalised','hat','card','candle', 'clock', 'frame','others']"
                     ></v-select>
                   </v-col>
                   <v-col cols="12" sm="12" md="6">
@@ -98,7 +98,7 @@
                       v-model="product.altText"
                       label="Image Alt text"
                       :prepend-icon="aiIconAlttext"
-                      @click:prepend="getAiAlttext()"   
+                      @click:prepend="getAiAlttext()"
                     ></v-text-field>
                   </v-col>
                   <!-- <v-col cols="12" sm="12" md="12">
@@ -168,7 +168,7 @@ export default {
       description: "",
       userId: "",
       rate: Math.floor(Math.random() * 5) + 1,
-      reviews:Math.floor(Math.random() * 250) + 1
+      reviews: Math.floor(Math.random() * 250) + 1,
     },
     dialog: false,
     dialogDelete: false,
@@ -224,7 +224,7 @@ export default {
       this.$store
         .dispatch("requestGet", link)
         .then((response) => {
-          if (response.status == 200 ) {
+          if (response.status == 200) {
             this.products = response.data.products;
           }
         })
@@ -311,7 +311,12 @@ export default {
       let send = { link, data: keyWords };
       await this.$store.dispatch("requestPost", send).then((response) => {
         if (response.status === 201) {
-          this.product.description = response.body.msg.split('"')[1];
+          if (response.body.msg.split('"').length > 1) {
+            this.product.description = response.body.msg.split('"')[1];
+          }else{
+            this.product.description = response.body.msg
+          }
+          
         } else {
         }
       });
@@ -325,7 +330,11 @@ export default {
       try {
         const response = await this.$store.dispatch("requestPost", send);
         if (response.status === 201) {
-         this.product.altText = response.body.msg.split('"')[1];
+          if (response.body.msg.split('"').length > 1) {
+            this.product.altText = response.body.msg.split('"')[1];
+          }else{
+            this.product.altText= response.body.msg
+          }
         } else {
           return null;
         }
@@ -336,7 +345,7 @@ export default {
       this.aiIconAlttext = "mdi-search-web";
     },
 
-filesSelected: async function (fileRecordsNewlySelected) {
+    filesSelected: async function (fileRecordsNewlySelected) {
       var validFileRecords = fileRecordsNewlySelected.filter(
         (fileRecord) => !fileRecord.error
       );
@@ -349,9 +358,6 @@ filesSelected: async function (fileRecordsNewlySelected) {
         .upload(link, { Authorization: Token }, this.fileRecordsForUpload)
         .then((f) => {
           this.fileRecordsForUpload = [];
-       
-         
-        
         });
       console.log("files", this.fileRecordsForUpload);
     },

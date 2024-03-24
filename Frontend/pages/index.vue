@@ -74,11 +74,10 @@
                       $store.state.ApiLink + 'file/serve-image/' + product.imgUrl
                     "
                     >
-                      <v-card-title>{{product.name}}</v-card-title>
                     </v-img>
 
-                    <v-card-text class="text--primary text-center">
-                      <div>Upto 60% + Extra 10%</div>
+                    <v-card-text class="text--primary text-center" style="max-height: 20px; overflow: hidden;">
+                      <div>{{product.name}}</div>
                     </v-card-text>
 
                     <div class="text-center">
