@@ -31,7 +31,7 @@
                                     <v-text-field v-model="authData.password"
                                                   label="password"
                                                   :rules="control" required
-                                                  type="password" prepend-icon="lock">
+                                                  type="password" prepend-icon="mdi-lock">
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="12">

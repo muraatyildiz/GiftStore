@@ -55,6 +55,7 @@
   </template>
  
   <script>
+import { computed } from 'vue'
   export default {
     middleware: ["session-control", "auth"],
     data () {
@@ -62,28 +63,6 @@
         clipped: false,
         drawer: false,
         fixed: false,
-        items: [
-          {
-            icon: 'mdi-account',
-            title: 'Users',
-            to: '/admin'
-          },
-          {
-            icon: 'mdi-sprout',
-            title: 'Products',
-            to: '/admin/productList'
-          },
-          {
-            icon: 'mdi-pencil',
-            title: 'Home Page Sliders',
-            to: '/admin/homeSliders'
-          },
-          {
-            icon: 'mdi-pencil',
-            title: 'Home Page Cards',
-            to: '/admin/homeCards'
-          },
-        ],
         miniVariant: false,
         right: true,
         rightDrawer: false,
@@ -94,7 +73,65 @@
       returnToWebShop(){
         this.$router.push("/")
       }
+    },
+    computed:{
+
+      userInfo() {
+                return this.$store.getters.getUserInfo;
+            },
+    items(){
+      let list
+      if(this.userInfo.role === 'manager' || this.userInfo.role === 'admin' ){
+        list = [
+      
+          {
+            icon: 'mdi-home-edit',
+            title: 'Home Page Sliders',
+            to: '/admin/homeSliders'
+          },
+          {
+            icon: 'mdi-picture-in-picture-bottom-right',
+            title: 'Home Page Cards',
+            to: '/admin/homeCards'
+          },
+       
+          {
+            icon: 'mdi-sprout',
+            title: 'Products',
+            to: '/admin/productList'
+          },
+          {
+            icon: 'mdi-account',
+            title: 'Users',
+            to: '/admin/users'
+          },
+        ]
+      }else{
+        list = [
+          {
+            icon: 'mdi-home-edit',
+            title: 'Home Page Sliders',
+            to: '/admin/homeSliders'
+          },
+          {
+            icon: 'mdi-picture-in-picture-bottom-right',
+            title: 'Home Page Cards',
+            to: '/admin/homeCards'
+          },
+        ]
+      }
+      return list
+   
+     
     }
+    },
+    created() {
+      if (process.client) {
+        console.log(this.userInfo)
+     this.$store.dispatch("auth/initAuth")
+      }
+  
+    },
   }
   </script>
  

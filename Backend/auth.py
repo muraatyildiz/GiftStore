@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import hashlib
 import datetime
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager,create_refresh_token, create_access_token, jwt_required, get_jwt_identity,get_jwt_identity, jwt_required, get_jwt
 from flask import Blueprint
 from logging.config import dictConfig
 from flask_cors import CORS
@@ -29,6 +29,8 @@ auth = Flask(__name__)
 CORS(auth)
 
 users_collection = db["users"]
+blacklist_collection = db["blacklist"]
+jwt = JWTManager(auth)
 
 @auth_api.route("/add", methods=["POST"])
 @jwt_required()
@@ -41,20 +43,37 @@ def register():
 		return jsonify({'msg': 'User created successfully'}), 201
 	else:
 		return jsonify({'msg': 'Username already exists'}), 409
-
+     
 @auth_api.route("/login", methods=["POST"])
 def login():
-	login_details = request.get_json()
-	user_from_db = users_collection.find_one({'username': login_details['username']}) 
+    login_details = request.get_json()
+    user_from_db = users_collection.find_one({'username': login_details['username']}) 
 
-	if user_from_db:
-		encrpted_password = hashlib.sha256(login_details['password'].encode("utf-8")).hexdigest()
-		if encrpted_password == user_from_db['password']:
-			access_token = create_access_token(identity=user_from_db['username']) 
-		return jsonify(access_token=access_token,username= user_from_db['username'],role= user_from_db['role']), 200
+    if user_from_db:
+        encrpted_password = hashlib.sha256(login_details['password'].encode("utf-8")).hexdigest()
+        if encrpted_password == user_from_db['password']:
+            access_token = create_access_token(identity=user_from_db['username']) 
+            refresh_token = create_refresh_token(identity=user_from_db['username'])
+            return jsonify(access_token=access_token, refresh_token=refresh_token, username=user_from_db['username'], role=user_from_db['role']), 200
 
-	return jsonify({'msg': 'The username or password is incorrect'}), 401
+    return jsonify({'msg': 'The username or password is incorrect'}), 401
 
+@auth_api.route("/logout", methods=["DELETE"])
+@jwt_required()
+def logout():
+    try:
+        jti = get_jwt()['jti'] 
+        blacklist_collection.insert_one({'jti': jti})  
+        return jsonify({'message': 'Successfully logged out'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blocklist(decrypted_token):
+    jti = decrypted_token['jti']
+    return bool(blacklist_collection.find_one({'jti': jti}))
+
+    
 @auth_api.route("/userInfo", methods=["GET"])
 @jwt_required()
 def profile():

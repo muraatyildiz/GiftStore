@@ -50,7 +50,7 @@
                     <v-select
                       v-model="user.role"
                       label="Role"
-                      :items="['admin', 'manager', 'staff', 'guest','customer']"
+                      :items="['admin', 'manager', 'staff', 'guest']"
                     ></v-select>
                   </v-col>
                   <v-col cols="12" sm="12" md="6">

@@ -4,18 +4,23 @@
       <p class="display-3 font-weight-light text-center pa-4">
         User Information
       </p>
-      <p class="overline text-center">{{user.fullname}} | "Acount Created Date"</p>
+      <p class="overline text-center">
+        {{ user.fullname }} | "Acount Created Date"
+      </p>
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <ul class="subtitle-1 font-weight-light">
             <li><b>Username: </b>{{ user.username }}</li>
             <li><b>Phone Number: </b>{{ user.phonenumber }}</li>
             <li><b>Email: </b>{{ user.email }}</li>
-            <li v-if="user.role !== 'customer'"><nuxt-link to="/admin"><b>Go to Admin</b></nuxt-link></li>
-            <li><nuxt-link to="/admin"><b>Log Out</b></nuxt-link></li>
+            <li v-if="user.role !== 'customer'">
+              <nuxt-link to="/admin/homeSliders"><b>Go to Admin</b></nuxt-link>
+            </li>
+            <li>
+              <nuxt-link to="#" ><v-btn @click="logout()">Log Out</v-btn></nuxt-link>
+            </li>
           </ul>
           <p class="body-1 font-weight-light pt-10"><b>Orders Records</b></p>
-          
         </div>
       </div>
     </v-container>
@@ -27,7 +32,7 @@ export default {
   data: () => ({
     rating: 4.5,
     item: 5,
-    user:{}
+    user: {},
   }),
   methods: {
     getUser() {
@@ -42,6 +47,22 @@ export default {
         .catch((x) => {
           console.log("Error");
         });
+    },
+    logout() {
+      console.log('here')
+      var ths = this;
+        this.$store
+          .dispatch("auth/logout")
+          .then((response) => {
+            this.Loading = false;
+            ths.app.router.push("/");
+          })
+          .catch((r) => {
+            this.$refs.form.reset();
+            this.loginError = true;
+            this.Loading = false;
+          });
+     
     },
   },
   created() {

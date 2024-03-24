@@ -137,6 +137,14 @@
         </v-dialog>
       </v-toolbar>
     </template>
+    <template v-slot:item.imgUrl="{ item }">
+      <v-img
+        :src="$store.state.ApiLink + 'file/serve-image/' + item.imgUrl"
+        width="100"
+        height="75"
+        contain
+      ></v-img>
+    </template>
     <template v-slot:item.actions="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
@@ -167,6 +175,12 @@ export default {
     fileRecordsForUpload: [],
     fileRecords: [],
     headers: [
+      {
+        text: "Image",
+        align: "center",
+        sortable: false,
+        value: "imgUrl",
+      },
       {
         text: "Products",
         align: "start",
