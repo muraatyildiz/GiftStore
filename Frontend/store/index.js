@@ -1,8 +1,8 @@
 import Vue from "vue";
 
 export const state = () => ({
-	ApiLink: process.env.NODE_ENV === "development" ? "http://127.0.0.1:5000/" : "/",
-	ApiLink2: process.env.NODE_ENV === "development" ? "http://20.218.157.149:8080/" : "/",
+	ApiLink2: process.env.NODE_ENV === "development" ? "http://127.0.0.1:5000/" : "/",
+	ApiLink: process.env.NODE_ENV === "development" ? "https://shop-api-gifts.azurewebsites.net/" : "https://shop-api-gifts.azurewebsites.net/",
 	userInfo: null,
 	cartProducts: [],
 	wishlistProducts: []

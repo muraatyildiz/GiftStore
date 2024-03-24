@@ -135,7 +135,17 @@ export default {
   },
   watch: {
     search() {
-      this.$router.push({ path: "./", query: { search: this.search } });
+      if (this.$route.name !== 'shop') {
+      if (this.search) {
+        this.$router.push({ name: 'shop', query: { search: this.search } });
+      } else {
+        // Handle the case where search is empty
+        this.$router.push({ name: 'shop' }); // Navigate to the "shop" page without query
+      }
+    } else if (this.search !== this.$route.query.search) {
+      // If already on the "shop" page but the search query has changed
+      this.$router.replace({ query: { search: this.search } });
+    }
     },
   },
   computed: {
