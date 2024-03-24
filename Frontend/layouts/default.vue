@@ -64,15 +64,15 @@
         <nuxt-link to="/" class="v-btn">
           <span>Home</span>
         </nuxt-link>
-        <nuxt-link to="/" class="v-btn">
+        <nuxt-link to="/shop" class="v-btn">
           <span>Shop</span>
         </nuxt-link>
 
-        <nuxt-link to="/" class="v-btn">
+        <nuxt-link to="/shop" class="v-btn">
           <span>Products</span>
         </nuxt-link>
 
-        <nuxt-link to="/" class="v-btn">
+        <nuxt-link to="/shop" class="v-btn">
           <span>Collections</span>
         </nuxt-link>
       </v-bottom-navigation>
@@ -86,13 +86,13 @@
           <v-btn to="/" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-home</v-icon>
           </v-btn>
-          <v-btn to="/" class="mx-4 white--text" icon>
+          <v-btn to="/shop" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-email</v-icon>
           </v-btn>
-          <v-btn to="/" class="mx-4 white--text" icon>
+          <v-btn to="/shop" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-calendar</v-icon>
           </v-btn>
-          <v-btn to="/" class="mx-4 white--text" icon>
+          <v-btn to="/shop" class="mx-4 white--text" icon>
             <v-icon size="24px">mdi-delete</v-icon>
           </v-btn>
         </v-card-text>
