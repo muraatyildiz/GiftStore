@@ -71,11 +71,11 @@
         </nuxt-link>
 
         <nuxt-link to="/shop" class="v-btn">
-          <span>Products</span>
+          <span>Delivery</span>
         </nuxt-link>
 
         <nuxt-link to="/shop" class="v-btn">
-          <span>Collections</span>
+          <span>About</span>
         </nuxt-link>
       </v-bottom-navigation>
     </v-content>
