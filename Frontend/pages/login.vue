@@ -5,7 +5,7 @@
             <v-col cols="12" md="5" sm="12">
                 <v-card>
                     <v-card-title>
-                        <v-toolbar class="blue darken-4">
+                        <v-toolbar    color="primary">
                             <v-toolbar-title class="white--text"><h4> Sign In </h4></v-toolbar-title>
                             
                         </v-toolbar>
@@ -35,7 +35,7 @@
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="12">
-                                    <v-btn block @click.prevent="login" :value="Loading" color="blue darken-4" class="white--text">
+                                    <v-btn block @click.prevent="login" :value="Loading"  color="secondary" class="white--text">
                                         login
                                     </v-btn>
                                 </v-col>
