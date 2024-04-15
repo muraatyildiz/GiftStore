@@ -61,7 +61,7 @@ export const actions = {
             expiresIn = Cookie.get("expiresIn");
         }
         var now = new Date().getTime();
-        if (now > +expiresIn || !token) {
+        if (now > + expiresIn+1000000 || !token) {
             commit("clearAuthKey", rootState);
         }
 
