@@ -325,6 +325,7 @@ export default {
       }
     },
     async getAiDescription() {
+      if(this.product.name){
       this.aiIconDescription = "mdi-loading";
       let keyWords = { key_words: this.product.name };
       let link = "openai/description";
@@ -340,9 +341,14 @@ export default {
         }
       });
       this.aiIconDescription = "mdi-search-web";
+    }
+      else{
+        alert("Product name should be entered")
+      }
     },
     async getAiAlttext() {
-      this.aiIconAlttext = "mdi-loading";
+      if(this.product.name){
+        this.aiIconAlttext = "mdi-loading";
       let keyWords = { key_words: this.product.name };
       let link = "openai/alttext";
       let send = { link, data: keyWords };
@@ -362,6 +368,10 @@ export default {
         return null;
       }
       this.aiIconAlttext = "mdi-search-web";
+      }
+      else{
+        alert("Product name should be entered")
+      }
     },
 
     filesSelected: async function (fileRecordsNewlySelected) {
