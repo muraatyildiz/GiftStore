@@ -25,89 +25,106 @@
 
             <v-card-text>
               <v-container>
-                <v-row>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model="product.name"
-                      label="Product Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model.number="product.price"
-                      label="Price"
-                      prefix="€"
-                      type="number"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-select
-                      v-model="product.category"
-                      label="Category"
-                      :items="['jewellery','personalised','hat','card','candle', 'clock', 'frame','others']"
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model.number="product.stock"
-                      label="Stock"
-                      type="number"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-textarea
-                      clearable
-                      clear-icon="mdi-close-circle"
-                      :prepend-icon="aiIconDescription"
-                      v-model="product.description"
-                      label="Description"
-                      variant="outlined"
-                      color="cyan"
-                      @click:prepend="getAiDescription()"
-                      placeholder="Get Ai support for product decription"
-                    ></v-textarea>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12">
-                    <div>
-                      <VueFileAgent
-                        ref="vueFileAgent"
-                        :theme="'grid'"
-                        :multiple="true"
-                        :deletable="true"
-                        :meta="true"
-                        :maxSize="'10MB'"
-                        :linkable="true"
-                        :maxFiles="1"
-                        @beforedelete="onBeforeDelete($event)"
-                        :helpText="'Choose img for the product'"
-                        :errorText="{
-                          type: 'Invalid file type. Only images or zip Allowed',
-                          size: 'Files should not exceed 10MB in size',
-                        }"
-                        @select="filesSelected($event)"
-                        @delete="fileDeleted($event)"
-                        :disabled="false"
-                        v-model="fileRecords"
-                        accept="image/*"
-                      >
-                      </VueFileAgent>
-                    </div>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field
-                      v-model="product.altText"
-                      label="Image Alt text"
-                      :prepend-icon="aiIconAlttext"
-                      @click:prepend="getAiAlttext()"
-                    ></v-text-field>
-                  </v-col>
-                  <!-- <v-col cols="12" sm="12" md="12">
-                      <v-img
-                      
-                        src="http://192.168.0.63:8080/file/serve-image/bolt-dumbbells-1.jpg" 
-                      ></v-img>
-                    </v-col> -->
-                </v-row>
+                <v-form ref="form">
+                  <v-row>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model="product.name"
+                        :rules="control"
+                        required
+                        label="Product Name"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model.number="product.price"
+                        :rules="control"
+                        required
+                        label="Price"
+                        prefix="€"
+                        type="number"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-select
+                        v-model="product.category"
+                        :rules="control"
+                        required
+                        label="Category"
+                        :items="[
+                          'jewellery',
+                          'personalised',
+                          'hat',
+                          'card',
+                          'candle',
+                          'clock',
+                          'frame',
+                          'others',
+                        ]"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model.number="product.stock"
+                        :rules="control"
+                        required
+                        label="Stock"
+                        type="number"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="12">
+                      <v-textarea
+                        :rules="control"
+                        required
+                        clearable
+                        clear-icon="mdi-close-circle"
+                        :prepend-icon="aiIconDescription"
+                        v-model="product.description"
+                        label="Description"
+                        variant="outlined"
+                        color="cyan"
+                        @click:prepend="getAiDescription()"
+                        placeholder="Get Ai support for product decription"
+                      ></v-textarea>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="12">
+                      <div>
+                        <VueFileAgent
+                          ref="vueFileAgent"
+                          :theme="'grid'"
+                          :multiple="true"
+                          :deletable="true"
+                          :meta="true"
+                          :maxSize="'10MB'"
+                          :linkable="true"
+                          :maxFiles="1"
+                          @beforedelete="onBeforeDelete($event)"
+                          :helpText="'Choose img for the product'"
+                          :errorText="{
+                            type: 'Invalid file type. Only images or zip Allowed',
+                            size: 'Files should not exceed 10MB in size',
+                          }"
+                          @select="filesSelected($event)"
+                          @delete="fileDeleted($event)"
+                          :disabled="false"
+                          v-model="fileRecords"
+                          accept="image/*"
+                        >
+                        </VueFileAgent>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="12">
+                      <v-text-field
+                        v-model="product.altText"
+                        :rules="control"
+                        required
+                        label="Image Alt text"
+                        :prepend-icon="aiIconAlttext"
+                        @click:prepend="getAiAlttext()"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-form>
               </v-container>
             </v-card-text>
 
@@ -157,6 +174,7 @@ export default {
   layout: "adminDefault",
   name: "productListPage",
   data: () => ({
+    control: [(v) => !!v || "Required!"],
     product: {
       id: "",
       name: "",
@@ -275,34 +293,36 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        if (this.fileRecords.length > 0) {
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          if (this.fileRecords.length > 0) {
+            this.product.imgUrl = this.fileRecords[0].file.name;
+          }
+          let product = JSON.parse(JSON.stringify(this.product));
+          let id = this.products[this.editedIndex]._id;
+          let link = "product/update/" + id;
+          let send = { link, data: product };
+          this.$store.dispatch("requestPut", send).then((response) => {
+            if ((response.status = 200)) {
+              this.getProductList();
+            } else {
+            }
+          });
+        } else {
           this.product.imgUrl = this.fileRecords[0].file.name;
+          let product = JSON.parse(JSON.stringify(this.product));
+          let link = "product/add";
+          let send = { link, data: product };
+          this.$store.dispatch("requestPost", send).then((response) => {
+            if (response.status == 201) {
+              this.getProductList();
+            } else {
+            }
+          });
         }
-        let product = JSON.parse(JSON.stringify(this.product));
-        let id = this.products[this.editedIndex]._id;
-        let link = "product/update/" + id;
-        let send = { link, data: product };
-        this.$store.dispatch("requestPut", send).then((response) => {
-          if ((response.status = 200)) {
-            this.getProductList();
-          } else {
-          }
-        });
-      } else {
-        this.product.imgUrl = this.fileRecords[0].file.name;
-        let product = JSON.parse(JSON.stringify(this.product));
-        let link = "product/add";
-        let send = { link, data: product };
-        this.$store.dispatch("requestPost", send).then((response) => {
-          if (response.status == 201) {
-            this.getProductList();
-          } else {
-          }
-        });
+        this.dialogKey = new Date().getTime();
+        this.close();
       }
-      this.dialogKey = new Date().getTime();
-      this.close();
     },
     async getAiDescription() {
       this.aiIconDescription = "mdi-loading";
@@ -313,10 +333,9 @@ export default {
         if (response.status === 201) {
           if (response.body.msg.split('"').length > 1) {
             this.product.description = response.body.msg.split('"')[1];
-          }else{
-            this.product.description = response.body.msg
+          } else {
+            this.product.description = response.body.msg;
           }
-          
         } else {
         }
       });
@@ -332,8 +351,8 @@ export default {
         if (response.status === 201) {
           if (response.body.msg.split('"').length > 1) {
             this.product.altText = response.body.msg.split('"')[1];
-          }else{
-            this.product.altText= response.body.msg
+          } else {
+            this.product.altText = response.body.msg;
           }
         } else {
           return null;

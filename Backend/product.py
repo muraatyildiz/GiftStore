@@ -111,7 +111,7 @@ def sendList():
 @product_api.route("/admin/list", methods=['GET'])
 @jwt_required()
 def sendAdminList(): 
-    data = list(products_collection.find({})) 
+    data = list(products_collection.find({}).sort('_id', 1)) 
     for item in data:
         item['_id'] = str(item['_id'])
 

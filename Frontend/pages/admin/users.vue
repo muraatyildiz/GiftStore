@@ -23,51 +23,65 @@
 
             <v-card-text>
               <v-container>
-                <v-row>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model="user.username"
-                      label=" Username"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model="user.password"
-                      label="Password"
-                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="showPassword ? 'text' : 'password'"
-                      @click:append="showPassword = !showPassword"
-                      :disabled="editedIndex !== -1"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model="user.fullname"
-                      label=" Full name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-select
-                      v-model="user.role"
-                      label="Role"
-                      :items="['admin', 'manager', 'staff', 'guest']"
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model.number="user.phonenumber"
-                      label="Phone Number"
-                      type="number"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="6">
-                    <v-text-field
-                      v-model="user.email"
-                      label="Email"
-                      type="email"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                <v-form ref="form">
+                  <v-row>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model="user.username"
+                        :rules="control"
+                        required
+                        label=" Username"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model="user.password"
+                        :rules="control"
+                        required
+                        label="Password"
+                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showPassword ? 'text' : 'password'"
+                        @click:append="showPassword = !showPassword"
+                        :disabled="editedIndex !== -1"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model="user.fullname"
+                        :rules="control"
+                        required
+                        label=" Full name"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-select
+                        v-model="user.role"
+                        :rules="control"
+                        required
+                        label="Role"
+                        :items="['admin', 'manager', 'staff', 'guest']"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model.number="user.phonenumber"
+                        :rules="control"
+                        required
+                        label="Phone Number"
+                        type="number"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="6">
+                      <v-text-field
+                        v-model="user.email"
+                        :rules="control"
+                        required
+                        label="Email"
+                        type="email"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-form>
               </v-container>
             </v-card-text>
 
@@ -79,22 +93,22 @@
           </v-card>
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="800px">
-            <v-card>
-              <v-card-title class="text-h5"
-                >Are you sure you want to delete this user?</v-card-title
+          <v-card>
+            <v-card-title class="text-h5"
+              >Are you sure you want to delete this user?</v-card-title
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeDelete"
+                >Cancel</v-btn
               >
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete"
-                  >Cancel</v-btn
-                >
-                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                  >OK</v-btn
-                >
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                >OK</v-btn
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
@@ -110,6 +124,7 @@ export default {
   name: "adminPage",
   data() {
     return {
+      control: [(v) => !!v || "Required!"],
       users: [],
       user: {
         id: "",
@@ -132,7 +147,7 @@ export default {
       dialogKey: new Date().getTime(),
       editedIndex: -1,
       showPassword: false,
-      dialogDelete: false
+      dialogDelete: false,
     };
   },
   created() {
@@ -212,30 +227,32 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        let user = JSON.parse(JSON.stringify(this.user));
-        let link = "auth/update/"+ this.user._id;
-        let send = { link, data: user };
-        this.$store.dispatch("requestPut", send).then((response) => {
-          if (response.status == 200) {
-            this.getUserList();
-          } else {
-            alert("Error");
-          }
-        });
-      } else {
-        let user = JSON.parse(JSON.stringify(this.user));
-        let link = "auth/add";
-        let send = { link, data: user };
-        this.$store.dispatch("requestPost", send).then((response) => {
-          if (response.status === 201) {
-            this.getUserList();
-          } else {
-          }
-        });
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          let user = JSON.parse(JSON.stringify(this.user));
+          let link = "auth/update/" + this.user._id;
+          let send = { link, data: user };
+          this.$store.dispatch("requestPut", send).then((response) => {
+            if (response.status == 200) {
+              this.getUserList();
+            } else {
+              alert("Error");
+            }
+          });
+        } else {
+          let user = JSON.parse(JSON.stringify(this.user));
+          let link = "auth/add";
+          let send = { link, data: user };
+          this.$store.dispatch("requestPost", send).then((response) => {
+            if (response.status === 201) {
+              this.getUserList();
+            } else {
+            }
+          });
+        }
+        this.dialogKey = new Date().getTime();
+        this.close();
       }
-      this.dialogKey = new Date().getTime();
-      this.close();
     },
   },
 };

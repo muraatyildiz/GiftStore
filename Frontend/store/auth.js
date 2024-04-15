@@ -58,7 +58,6 @@ export const actions = {
             }
         } else {
             token = Cookie.get("authKey");
-            //token = localStorage.getItem("authKey");
             expiresIn = Cookie.get("expiresIn");
         }
         var now = new Date().getTime();
@@ -79,7 +78,7 @@ export const actions = {
         return Vue.http.post(authLink, data, { headers: { "Content-Type": "application/json" } })
             .then((response) => {
                 let data = response.data;
-                let expiresIn = new Date().getTime() + +data.expires_in * 1000;
+                let expiresIn = new Date().getTime() ;
                 Cookie.set("authKey", data.access_token);
                 Cookie.set("expiresIn", expiresIn);
                 commit("setAuthKey", { authKey: data.access_token, expiresIn });

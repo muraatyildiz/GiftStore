@@ -23,11 +23,14 @@
 
             <v-card-text>
               <v-container>
+                <v-form ref="form">
                 <v-row>
-                <v-col cols="12" sm="12" md="12">
+                  <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="slider.header"
                       label="Header"
+                      :rules="control"
+                        required
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
@@ -59,6 +62,8 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="slider.altText"
+                      :rules="control"
+                        required
                       label="Image Alt text"
                       :prepend-icon="aiIconAlttext"
                       @click:prepend="getAiAlttext()"
@@ -67,11 +72,14 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-select
                       v-model="slider.route"
+                      :rules="control"
+                        required
                       label="Route"
                       :items="['/shop', '/products', '/collection']"
                     ></v-select>
                   </v-col>
                 </v-row>
+              </v-form>
               </v-container>
             </v-card-text>
 
@@ -114,7 +122,6 @@
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
   </v-data-table>
-  
 </template>
     
    <script>
@@ -123,10 +130,11 @@ export default {
   name: "adminPage",
   data() {
     return {
+      control: [(v) => !!v || "Required!"],
       sliders: [],
       slider: {
         id: "",
-        header:"",
+        header: "",
         imgUrl: "",
         altText: "",
         route: "",
@@ -134,7 +142,7 @@ export default {
       fileRecordsForUpload: [],
       fileRecords: [],
       headers: [
-      { text: "Header", value: "header" },
+        { text: "Header", value: "header" },
         { text: "Image", value: "imgUrl" },
         { text: "image Alt text", value: "altText" },
         { text: "Route", value: "route" },
@@ -225,34 +233,36 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        if (this.fileRecords.length > 0) {
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          if (this.fileRecords.length > 0) {
+            this.slider.imgUrl = this.fileRecords[0].file.name;
+          }
+          let slider = JSON.parse(JSON.stringify(this.slider));
+          let link = "homepage/update/" + this.slider._id;
+          let send = { link, data: slider };
+          this.$store.dispatch("requestPut", send).then((response) => {
+            if (response.status == 200) {
+              this.getSliderList();
+            } else {
+              alert("Error");
+            }
+          });
+        } else {
           this.slider.imgUrl = this.fileRecords[0].file.name;
+          let slider = JSON.parse(JSON.stringify(this.slider));
+          let link = "homepage/addslider";
+          let send = { link, data: slider };
+          this.$store.dispatch("requestPost", send).then((response) => {
+            if (response.status === 201) {
+              this.getSliderList();
+            } else {
+            }
+          });
         }
-        let slider = JSON.parse(JSON.stringify(this.slider));
-        let link = "homepage/update/" + this.slider._id;
-        let send = { link, data: slider };
-        this.$store.dispatch("requestPut", send).then((response) => {
-          if (response.status == 200) {
-            this.getSliderList();
-          } else {
-            alert("Error");
-          }
-        });
-      } else {
-        this.slider.imgUrl = this.fileRecords[0].file.name;
-        let slider = JSON.parse(JSON.stringify(this.slider));
-        let link = "homepage/addslider";
-        let send = { link, data: slider };
-        this.$store.dispatch("requestPost", send).then((response) => {
-          if (response.status === 201) {
-            this.getSliderList();
-          } else {
-          }
-        });
+        this.dialogKey = new Date().getTime();
+        this.close();
       }
-      this.dialogKey = new Date().getTime();
-      this.close();
     },
     async getAiAlttext() {
       this.aiIconAlttext = "mdi-loading";
