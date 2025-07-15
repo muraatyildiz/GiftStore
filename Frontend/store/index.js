@@ -1,7 +1,7 @@
 import Vue from "vue";
 
 export const state = () => ({
-    ApiLink: process.env.NODE_ENV === "development" ? "http://127.0.0.1:8080/" : "https://giftstore-fnig.onrender.com/",
+    ApiLink: process.env.NODE_ENV === "development" ? "http://127.0.0.1:8080/" : "https://gift-shop-backend-8g7v.onrender.com/",
     userInfo: null,
     cartProducts: [],
     wishlistProducts: []
