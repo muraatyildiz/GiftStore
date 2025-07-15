@@ -22,7 +22,7 @@ mysql-connector==2.2.9
 openai==1.13.3
 paramiko==3.4.0
 pycparser==2.21
-pydantic==2.6.3
+pydantic==1.10.22
 pydantic_core==2.16.3
 PyJWT==2.8.0
 pymongo==4.6.2
