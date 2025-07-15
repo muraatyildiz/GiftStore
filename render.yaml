@@ -2,7 +2,7 @@ services:
   - type: web
     name: gift-shop-backend
     env: python
-    region: Ireland
+    region: Oregon (US West)
     rootDir: Backend
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
